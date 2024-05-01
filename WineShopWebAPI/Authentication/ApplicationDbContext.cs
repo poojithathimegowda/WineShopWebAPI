@@ -8,7 +8,6 @@ using WineShopWebAPI.Models;
 namespace WineShopWebAPI.Authentication
 {
 
-
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -22,7 +21,7 @@ namespace WineShopWebAPI.Authentication
             builder.Entity<Shop>().HasData(
            new Shop { Id= 1, Name = "Poojitha Wines" , Address="Hebbal, Bangalore",Email="pw@g.com",PhoneNo="123456"},
            new Shop { Id = 2,  Name = "Ranjith Bar", Address = "Kodigehalli, Bangalore", Email = "pw@g.com", PhoneNo = "123456" }
-       // Add more entities as needed
+           // Add more entities as needed
        );
         }
         public DbSet<Shop> Shops { get; set; }
