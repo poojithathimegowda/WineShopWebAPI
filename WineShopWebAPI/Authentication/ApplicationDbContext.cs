@@ -1,47 +1,46 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
+using System;
 using WineShopWebAPI.Authentication;
 using WineShopWebAPI.Models;
 
 namespace WineShopWebAPI.Authentication
 {
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
         {
-
         }
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
 
-            builder.Entity<Shop>().HasData(
-           new Shop { Id= 1, Name = "Poojitha Wines" , Address="Hebbal, Bangalore",Email="pw@g.com",PhoneNo="123456"},
-           new Shop { Id = 2,  Name = "Ranjith Bar", Address = "Kodigehalli, Bangalore", Email = "pw@g.com", PhoneNo = "123456" }
-           // Add more entities as needed
-       );
-        }
+        // Add DbSet properties for your entities
+ 
         public DbSet<Shop> Shops { get; set; }
-        public DbSet<AccountGroup> AccountGroups { get; set; }
-        public DbSet<ChartOfAccount> ChartOfAccounts { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<ExpenseClaim> ExpenseClaims { get; set; }
-        public DbSet<Item> Items { get; set; }
-        public DbSet<ItemStock> ItemStocks { get; set; }
-        public DbSet<PurchaseRegister> PurchaseRegisters { get; set; }
-        public DbSet<SalesRegister> SalesRegisters { get; set; }
+        public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Product> Products { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
-        public DbSet<SupplierItem> SupplierItems { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure the relationship between Shop and User entities
+            modelBuilder.Entity<Shop>()
+                .HasMany(s => s.Employees)   // Shop has many Employees
+                .WithOne(u => u.Shop)        // User has one Shop
+                .HasForeignKey(u => u.Shop_ID); // Foreign key
+
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=tcp:poojithahome.database.windows.net,1433;Initial Catalog=PoojithaHome;Persist Security Info=False;User ID=poojithaadmin;Password=Ranjith@7591;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
     }
-
 }
 
 

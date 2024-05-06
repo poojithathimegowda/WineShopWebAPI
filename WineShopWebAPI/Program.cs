@@ -8,6 +8,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using WineShopWebAPI.Authentication;
 using Microsoft.AspNetCore.Authentication;
+using WineShopWebAPI.Models;
+using WineShopWebAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr"),
     sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
@@ -137,5 +139,27 @@ app.UseEndpoints(endpoints =>
 
 app.UseCors("AllowAnyOrigin");
 //app.UseCors("AllowSpecificOrigin");
+
+
+// Other configurations
+
+
+
+
+using (var scope = app.Services.CreateScope())
+{
+
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+
+    // Apply pending migrations
+    context.Database.Migrate();
+
+    // Seed default data
+    SeedData.Initialize(services).Wait();
+};
+
+
+
 
 app.Run();
