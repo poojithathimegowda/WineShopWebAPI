@@ -10,6 +10,7 @@ using WineShopWebAPI.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using WineShopWebAPI.Models;
 using WineShopWebAPI.Data;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -112,7 +113,13 @@ builder.Services.AddCors(options =>
 
 
 // Add controllers
-builder.Services.AddControllers();
+
+
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 
 var app = builder.Build();
@@ -146,18 +153,18 @@ app.UseCors("AllowAnyOrigin");
 
 
 
-using (var scope = app.Services.CreateScope())
-{
+//using (var scope = app.Services.CreateScope())
+//{
 
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
+//    var services = scope.ServiceProvider;
+//    var context = services.GetRequiredService<ApplicationDbContext>();
 
-    // Apply pending migrations
-    context.Database.Migrate();
+//    // Apply pending migrations
+//    //context.Database.Migrate();
 
-    // Seed default data
-    SeedData.Initialize(services).Wait();
-};
+//    // Seed default data
+//    SeedData.Initialize(services).Wait();
+//};
 
 
 
