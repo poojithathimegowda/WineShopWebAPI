@@ -28,7 +28,7 @@ namespace WineShopWebAPI.Data
             // Seed shops
             if (!context.Shops.Any())
             {
-                var shop1 = new Shop { Shop_Name = "Shop 1", Location = "Location 1" };
+                var shop1 = new Shop { Shop_Name = "Shop 1", Location = "Location 1"  };
                 var shop2 = new Shop { Shop_Name = "Shop 2", Location = "Location 2" };
                 var shop3 = new Shop { Shop_Name = "Shop 3", Location = "Location 3" };
 

@@ -20,7 +20,8 @@ namespace WineShopWebAPI.Authentication
         [Required(ErrorMessage = "Role is required")]
         public string Role { get; set; }
 
-        public int? Shop_ID { get; set; }
+        [Required(ErrorMessage = "Shop ID is required")]
+        public int Shop_ID { get; set; }
 
         // Additional properties
         public string FirstName { get; set; }

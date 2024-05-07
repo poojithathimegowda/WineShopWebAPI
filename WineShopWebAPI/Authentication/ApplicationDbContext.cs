@@ -34,9 +34,24 @@ namespace WineShopWebAPI.Authentication
                 .WithOne(u => u.Shop)        // User has one Shop
                 .HasForeignKey(u => u.Shop_ID); // Foreign key
 
+
+
+         
+            modelBuilder.Entity<Expense>()
+                .HasOne(e => e.Shop)
+                .WithMany(s => s.Expenses)
+                .HasForeignKey(e => e.Shop_ID);
+
+
+            modelBuilder.Entity<Expense>()
+        .Property(e => e.Amount)
+        .HasPrecision(20, 5); // Adjust the precision and scale as needed
+
+
+
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=tcp:poojithahome.database.windows.net,1433;Initial Catalog=PoojithaHome;Persist Security Info=False;User ID=poojithaadmin;Password=Ranjith@7591;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
