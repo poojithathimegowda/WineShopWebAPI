@@ -8,7 +8,7 @@ using WineShopWebAPI.Authentication;
 
 namespace WineShopWebAPI.Controllers
 {
-    //[Authorize(Roles = "PurchaseManager")]
+    [Authorize(Roles = "PurchaseManager")]
     [ApiController]
     [Route("api/[controller]")]
     public class InventoryController : ControllerBase
@@ -46,34 +46,39 @@ namespace WineShopWebAPI.Controllers
 
         // PUT: api/Inventory/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInventory(int id, Inventory inventory)
+        public async Task<IActionResult> PutInventory(int id, ShopInventory shopInventory)
         {
-            if (id != inventory.Inventory_ID)
-            {
-                return BadRequest();
-            }
-            var existingProduct = await _context.Products.FindAsync(inventory.Product_ID);
-            if (existingProduct == null)
-            {
-                // If the supplier does not exist, return a 404 Not Found response
-                return NotFound($"Supplier with ID {inventory.Product_ID} not found");
-            }
-
-            // Assign the existing supplier to the product
-            inventory.Product = existingProduct;
-            var existingShop = await _context.Shops.FindAsync(inventory.Shop_ID);
-            if (existingShop == null)
-            {
-                // If the supplier does not exist, return a 404 Not Found response
-                return NotFound($"Supplier with ID {inventory.Shop_ID} not found");
-            }
-
-            // Assign the existing supplier to the product
-            inventory.Shop = existingShop;
-            _context.Entry(inventory).State = EntityState.Modified;
-
             try
             {
+                Inventory inventory = await _context.Inventories.FindAsync(id);
+                if (inventory == null)
+                {
+                    return NotFound();
+                }
+
+                // Update inventory properties with the values from shopInventory
+                inventory.Product_ID = shopInventory.Product_ID;
+                inventory.Shop_ID = shopInventory.Shop_ID;
+                inventory.Quantity = shopInventory.Quantity;
+
+                var existingProduct = await _context.Products.FindAsync(inventory.Product_ID);
+                if (existingProduct == null)
+                {
+                    return NotFound("Product not found");
+                }
+
+                var existingShop = await _context.Shops.FindAsync(inventory.Shop_ID);
+                if (existingShop == null)
+                {
+                    return NotFound("Shop not found");
+                }
+
+                // Assign the existing product to the inventory
+                inventory.Product = existingProduct;
+                // Assign the existing shop to the inventory
+                inventory.Shop = existingShop;
+
+                _context.Entry(inventory).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -87,38 +92,54 @@ namespace WineShopWebAPI.Controllers
                     throw;
                 }
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
 
             return NoContent();
         }
 
+
         // POST: api/Inventory
         [HttpPost]
-        public async Task<ActionResult<Inventory>> PostInventory(Inventory inventory)
+        public async Task<ActionResult<Inventory>> PostInventory(ShopInventory shopInventory)
         {
-            var existingProduct = await _context.Products.FindAsync(inventory.Product_ID);
-            if (existingProduct == null)
+            try
             {
-                // If the supplier does not exist, return a 404 Not Found response
-                return NotFound($"Supplier with ID {inventory.Product_ID} not found");
-            }
+                Inventory inventory = new Inventory();
+                inventory.Product_ID = shopInventory.Product_ID;
+                inventory.Shop_ID = shopInventory.Shop_ID;
+                inventory.Quantity = shopInventory.Quantity;
 
-            
-            var existingShop = await _context.Shops.FindAsync(inventory.Shop_ID);
-            if (existingShop == null)
+                var existingProduct = await _context.Products.FindAsync(inventory.Product_ID);
+                if (existingProduct == null)
+                {
+                    return NotFound("Product not found");
+                }
+
+                var existingShop = await _context.Shops.FindAsync(inventory.Shop_ID);
+                if (existingShop == null)
+                {
+                    return NotFound("Shop not found");
+                }
+
+                // Assign the existing product to the inventory
+                inventory.Product = existingProduct;
+                // Assign the existing shop to the inventory
+                inventory.Shop = existingShop;
+
+                _context.Inventories.Add(inventory);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetInventory", new { id = inventory.Inventory_ID }, inventory);
+            }
+            catch (Exception ex)
             {
-                // If the supplier does not exist, return a 404 Not Found response
-                return NotFound($"Supplier with ID {inventory.Shop_ID} not found");
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
-
-            // Assign the existing supplier to the product
-            inventory.Product = existingProduct;
-            // Assign the existing supplier to the product
-            inventory.Shop = existingShop;
-            _context.Inventories.Add(inventory);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetInventory", new { id = inventory.Inventory_ID }, inventory);
         }
+
 
         // DELETE: api/Inventory/5
         [HttpDelete("{id}")]

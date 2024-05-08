@@ -8,8 +8,8 @@ using WineShopWebAPI.Authentication;
 
 namespace WineShopWebAPI.Controllers
 {
-   
-   [Authorize(Roles = "PurchaseManager")]
+
+    [Authorize(Roles = "PurchaseManager")]
     [ApiController]
     [Route("api/[controller]")]
     public class SuppliersController : ControllerBase
@@ -51,15 +51,14 @@ namespace WineShopWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSupplier(int id, Supplier supplier)
         {
-            if (id != supplier.Supplier_ID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(supplier).State = EntityState.Modified;
-
             try
             {
+                if (id != supplier.Supplier_ID)
+                {
+                    return BadRequest();
+                }
+
+                _context.Entry(supplier).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -81,10 +80,20 @@ namespace WineShopWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Supplier>> PostSupplier(Supplier supplier)
         {
-            _context.Suppliers.Add(supplier);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Suppliers.Add(supplier);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSupplier", new { id = supplier.Supplier_ID }, supplier);
+                return CreatedAtAction("GetSupplier", new { id = supplier.Supplier_ID }, supplier);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+
+                throw;
+
+            }
+
         }
 
         // DELETE: api/Supplier/5

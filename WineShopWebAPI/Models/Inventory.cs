@@ -16,4 +16,11 @@ namespace WineShopWebAPI.Models
         [ForeignKey("Shop_ID")]
         public virtual Shop Shop { get; set; }
     }
+    public class ShopInventory
+    {
+        public int Product_ID { get; set; } 
+        public int Shop_ID { get; set; } 
+        public int Quantity { get; set; }
+        
+    }
 }

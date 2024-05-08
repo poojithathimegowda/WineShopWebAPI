@@ -50,15 +50,14 @@ namespace WineShopWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutShop(int id, Shop shop)
         {
-            if (id != shop.Shop_ID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(shop).State = EntityState.Modified;
-
             try
             {
+                if (id != shop.Shop_ID)
+                {
+                    return BadRequest();
+                }
+
+                _context.Entry(shop).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -80,10 +79,20 @@ namespace WineShopWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Shop>> PostShop(Shop shop)
         {
-            _context.Shops.Add(shop);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Shops.Add(shop);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetShop", new { id = shop.Shop_ID }, shop);
+                return CreatedAtAction("GetShop", new { id = shop.Shop_ID }, shop);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+
+                throw;
+
+            }
+
         }
 
         // DELETE: api/Shop/5

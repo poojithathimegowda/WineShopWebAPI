@@ -18,4 +18,13 @@ namespace WineShopWebAPI.Models
         [ForeignKey("Product_ID")]
         public virtual Product Product { get; set; }
     }
+    public class ShopOrders
+    {
+        public int Shop_ID { get; set; } 
+        public int Product_ID { get; set; } 
+        public int Quantity { get; set; }
+        public decimal Total_Amount { get; set; }
+        public DateTime Order_Date { get; set; }
+       
+    }
 }
