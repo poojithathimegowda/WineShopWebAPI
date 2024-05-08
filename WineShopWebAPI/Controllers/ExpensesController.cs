@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WineShopWebAPI.Controllers
 {
-   // [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,User")]
     [ApiController]
     [Route("api/[controller]")]
     public class ExpensesController : ControllerBase
@@ -48,23 +48,25 @@ namespace WineShopWebAPI.Controllers
 
         // PUT: api/Expense/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutExpense(int id, Expense expense)
+        public async Task<IActionResult> PutExpense(int id, ShopExpenses value)
         {
-            if (id != expense.Expense_ID)
-            {
-                return BadRequest();
-            }
-            var existingShop= await _context.Shops.FindAsync(expense.Shop_ID);
-
-            if (existingShop == null)
-            {
-                // If the product does not exist, return a 404 Not Found response
-                return NotFound();
-            }
-            expense.Shop=existingShop;
-
             try
             {
+                Expense expense = await _context.Expenses.FindAsync(id);
+                if (expense == null)
+                {
+                    return NotFound();
+                }
+
+                expense.Shop_ID = value.Shop_ID;
+                expense.Expense_Type = value.Expense_Type;
+                expense.Amount = value.Amount;
+
+                var existingShop = await _context.Shops.FindAsync(expense.Shop_ID);
+                
+                expense.Shop = existingShop;
+
+                _context.Entry(expense).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -78,41 +80,41 @@ namespace WineShopWebAPI.Controllers
                     throw;
                 }
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
 
             return NoContent();
         }
 
-        
+
         // POST: api/Expense
         [HttpPost]
         public async Task<ActionResult<Expense>> PostExpense(ShopExpenses value)
         {
-            Expense expense= new Expense();
-            expense.Shop_ID = value.Shop_ID;
-            expense.Expense_Type= value.Expense_Type;
-            expense.Amount = value.Amount;
-           
+            try
+            {
+                Expense expense = new Expense();
+                expense.Shop_ID = value.Shop_ID;
+                expense.Expense_Type = value.Expense_Type;
+                expense.Amount = value.Amount;
 
+                var existingShop = await _context.Shops.FindAsync(value.Shop_ID);
+                
+                // Assign the existing shop to the expense
+                expense.Shop = existingShop;
 
-            var existingShop = await _context.Shops.FindAsync(value.Shop_ID);
+                _context.Expenses.Add(expense);
+                await _context.SaveChangesAsync();
 
-            //if (existingShop == null)
-            //{
-            //    // If the shop does not exist, return a 404 Not Found response with a descriptive error message
-            //    return NotFound($"Shop with ID {expense.Shop_ID} not found");
-            //}
-
-            //// Assign the existing shop to the expense
-            expense.Shop = existingShop;
-
-
-        
-
-            _context.Expenses.Add(expense);
-            await _context.SaveChangesAsync();
-
-            // Return a 201 Created response with the created expense
-            return CreatedAtAction("GetExpense", new { id = expense.Expense_ID }, expense);
+                // Return a 201 Created response with the created expense
+                return CreatedAtAction("GetExpense", new { id = expense.Expense_ID }, expense);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
 
