@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WineShopWebAPI.Controllers
 {
-    [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,StoreManager,Employee")]
     [ApiController]
     [Route("api/[controller]")]
     public class ExpensesController : ControllerBase

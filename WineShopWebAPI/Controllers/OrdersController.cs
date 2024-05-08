@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace WineShopWebAPI.Controllers
 {
-    //[Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "StoreManager")]
     [ApiController]
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
@@ -51,7 +51,7 @@ namespace WineShopWebAPI.Controllers
 
         // POST: api/Orders
         [HttpPost]
-      
+
 
         public async Task<ActionResult<Order>> PostOrder(ShopOrders shoporder)
         {
