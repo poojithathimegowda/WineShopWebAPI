@@ -112,6 +112,10 @@ builder.Services.AddCors(options =>
 });
 
 
+
+
+
+
 // Add controllers
 
 
@@ -145,6 +149,9 @@ app.UseEndpoints(endpoints =>
 });
 
 app.UseCors("AllowAnyOrigin");
+
+
+
 //app.UseCors("AllowSpecificOrigin");
 
 
