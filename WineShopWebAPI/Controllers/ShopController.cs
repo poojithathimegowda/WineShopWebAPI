@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WineShopWebAPI.Controllers
 {
-    //[Authorize(Roles = "Admin,User")]
+   
     [ApiController]
     [Route("api/[controller]")]
     public class ShopController : ControllerBase
@@ -116,6 +116,27 @@ namespace WineShopWebAPI.Controllers
             return _context.Shops.Any(e => e.Shop_ID == id);
         }
 
+
+        // GET: api/Shop/AutoComplete
+        [HttpGet("AutoComplete")]
+        public IActionResult AutoComplete(string term)
+        {
+            try
+            {
+                // Query the database for shops that match the term
+                var shops = _context.Shops
+                    .Where(s => s.Shop_Name.Contains(term))
+                    .Select(s => new { label = s.Shop_Name, value = s.Shop_ID })
+                    .ToList();
+
+                // Return the JSON result
+                return Ok(shops);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred: {ex.Message}");
+            }
+        }
 
 
 

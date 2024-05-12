@@ -117,7 +117,26 @@ namespace WineShopWebAPI.Controllers
             return _context.Suppliers.Any(e => e.Supplier_ID == id);
         }
 
+        // GET: api/Suppliers/AutoComplete
+        [HttpGet("AutoComplete")]
+        public IActionResult AutoComplete(string term)
+        {
+            try
+            {
+                // Query the database for suppliers that match the term
+                var suppliers = _context.Suppliers
+                    .Where(s => s.Supplier_Name.Contains(term))
+                    .Select(s => new { label = s.Supplier_Name, value = s.Supplier_ID })
+                    .ToList();
 
+                // Return the JSON result
+                return Ok(suppliers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }
 

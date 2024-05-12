@@ -8,7 +8,7 @@ using WineShopWebAPI.Authentication;
 
 namespace WineShopWebAPI.Controllers
 {
-    [Authorize(Roles = "PurchaseManager")]
+
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
@@ -25,10 +25,26 @@ namespace WineShopWebAPI.Controllers
 
         // GET: api/Product
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductWithSupplier>>> GetProducts()
         {
-            return await _context.Products.ToListAsync();
+            var productsWithSuppliers = await _context.Products
+                .Join(_context.Suppliers,
+                    product => product.Supplier_ID,
+                    supplier => supplier.Supplier_ID,
+                    (product, supplier) => new ProductWithSupplier
+                    {
+                        Product_ID = product.Product_ID,
+                        Product_Name = product.Product_Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Supplier_Name = supplier.Supplier_Name,
+                        Supplier_ID = supplier.Supplier_ID
+                    })
+                .ToListAsync();
+
+            return productsWithSuppliers;
         }
+
 
         // GET: api/Product/5
         [HttpGet("{id}")]
@@ -46,10 +62,18 @@ namespace WineShopWebAPI.Controllers
 
         // PUT: api/Product/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProduct(int id, ProductRequest productRequest)
         {
             try
             {
+               Product product = new Product();
+
+                product.Product_ID = productRequest.Product_ID;
+                product.Product_Name=productRequest.Product_Name;
+                product.Description= productRequest.Description;
+                product.Price = productRequest.Price;
+                product.Supplier_ID = productRequest.Supplier_ID;
+
                 if (id != product.Product_ID)
                 {
                     return BadRequest();
@@ -102,7 +126,7 @@ namespace WineShopWebAPI.Controllers
 
         // POST: api/Product
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<Product>> PostProduct(ProductRequest product)
         {
             try
             {
@@ -114,11 +138,21 @@ namespace WineShopWebAPI.Controllers
                     return NotFound($"Supplier with ID {product.Supplier_ID} not found");
                 }
 
-                // Assign the existing supplier to the product
-                product.Supplier = existingSupplier;
+                var newProduct = new Product()
+                {
+                    Price = product.Price,
+                    Product_Name = product.Product_Name,
+                    Description = product.Description,
+                    Supplier_ID = product.Supplier_ID,
+                    Supplier = existingSupplier    // Assign the existing supplier to the product
+                };
+
+
+
+                //newProduct.Supplier = existingSupplier;
 
                 // Add the product to the context
-                _context.Products.Add(product);
+                _context.Products.Add(newProduct);
 
                 // Save changes to the database
                 await _context.SaveChangesAsync();
@@ -155,6 +189,27 @@ namespace WineShopWebAPI.Controllers
             return _context.Products.Any(e => e.Product_ID == id);
         }
 
+
+        // GET: api/Products/AutoComplete
+        [HttpGet("AutoComplete")]
+        public IActionResult AutoComplete(string term)
+        {
+            try
+            {
+                // Query the database for products that match the term
+                var products = _context.Products
+                    .Where(p => p.Product_Name.Contains(term))
+                    .Select(p => new { label = p.Product_Name, value = p.Product_ID })
+                    .ToList();
+
+                // Return the JSON result
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred: {ex.Message}");
+            }
+        }
 
 
     }
