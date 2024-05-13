@@ -30,10 +30,27 @@ namespace WineShopWebAPI.Controllers
 
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
+        public async Task<ActionResult<IEnumerable<OrdersJoin>>> GetOrders()
         {
-            return await _context.Orders.ToListAsync();
+            var orders = await _context.Orders
+                .Include(o => o.Product)
+                .Include(o => o.Shop)
+                .Select(o => new OrdersJoin
+                {
+                    Order_ID=o.Order_ID,
+                    Shop_ID = o.Shop.Shop_ID,
+                    Shop_Name = o.Shop.Shop_Name,
+                    Product_ID = o.Product.Product_ID,
+                    Product_Name = o.Product.Product_Name,
+                    Quantity = o.Quantity,
+                    Total_Amount = o.Total_Amount,
+                    Order_Date = o.Order_Date
+                })
+                .ToListAsync();
+
+            return orders;
         }
+
 
         // GET: api/Orders/5
         [HttpGet("{id}")]

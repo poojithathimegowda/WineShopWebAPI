@@ -20,11 +20,24 @@ namespace WineShopWebAPI.Models
     }
     public class ShopOrders
     {
-        public int Shop_ID { get; set; } 
-        public int Product_ID { get; set; } 
+        public int Shop_ID { get; set; }
+        public int Product_ID { get; set; }
         public int Quantity { get; set; }
         public decimal Total_Amount { get; set; }
         public DateTime Order_Date { get; set; }
-       
+
+    }
+
+    public class OrdersJoin
+    {
+        public int Order_ID { get; set; }
+        public int Shop_ID { get; set; }
+        public string Shop_Name { get; set; }
+        public int Product_ID { get; set; }
+        public string Product_Name { get; set; }
+        public int Quantity { get; set; }
+        public decimal Total_Amount { get; set; }
+        public DateTime Order_Date { get; set; }
+
     }
 }

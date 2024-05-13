@@ -25,10 +25,25 @@ namespace WineShopWebAPI.Controllers
 
         // GET: api/Inventory
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Inventory>>> GetInventories()
+        public async Task<ActionResult<IEnumerable<InventoryJoin>>> GetInventories()
         {
-            return await _context.Inventories.ToListAsync();
+            var inventories = await _context.Inventories
+                .Include(i => i.Product)
+                .Include(i => i.Shop)
+                .Select(i => new InventoryJoin
+                {
+                    Inventory_ID=i.Inventory_ID,
+                    Product_ID = i.Product.Product_ID,
+                    Product_Name = i.Product.Product_Name,
+                    Shop_ID = i.Shop.Shop_ID,
+                    Shop_Name = i.Shop.Shop_Name,
+                    Quantity = i.Quantity
+                })
+                .ToListAsync();
+
+            return inventories;
         }
+
 
         // GET: api/Inventory/5
         [HttpGet("{id}")]
