@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -75,7 +76,35 @@ namespace WineShopWebAPI.Controllers
         }
 
 
-       
+        //[Authorize] // Ensure the request is authenticated with JWT
+        //[HttpGet("getUserData")]
+        //public async Task<UserModel> GetUserData()
+        //{
+        //    UserModel userModel = new UserModel();
+        //    // Get the user's ID from the JWT token
+        //    string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        //    // Retrieve the user from the database using the user ID
+        //    var user = await userManager.FindByIdAsync(userId);
+
+        //    if (user != null)
+        //    {
+        //        userModel.Id = user.Id;
+        //        userModel.UserName = user.UserName;
+        //        userModel.Role = user.Role;
+        //        userModel.ShopId = user.Shop_ID.Value;
+        //        userModel.Email = user.Email;
+
+
+               
+
+        //        return userModel;
+        //    }
+        //    else
+        //    {
+        //        return userModel;
+        //    }
+        //}
     }
 
 

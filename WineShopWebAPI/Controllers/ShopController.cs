@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis;
 
 namespace WineShopWebAPI.Controllers
 {
@@ -48,7 +49,7 @@ namespace WineShopWebAPI.Controllers
 
         // PUT: api/Shop/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutShop(int id, Shop shop)
+        public async Task<IActionResult> PutShop(int id, ShopRequest shop)
         {
             try
             {
@@ -56,8 +57,13 @@ namespace WineShopWebAPI.Controllers
                 {
                     return BadRequest();
                 }
-
-                _context.Entry(shop).State = EntityState.Modified;
+                Shop newShop = new Shop()
+                {
+                    Shop_ID = shop.Shop_ID,
+                    Shop_Name = shop.Shop_Name,
+                    Location = shop.Location
+                };
+                _context.Entry(newShop).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -77,11 +83,17 @@ namespace WineShopWebAPI.Controllers
 
         // POST: api/Shop
         [HttpPost]
-        public async Task<ActionResult<Shop>> PostShop(Shop shop)
+        public async Task<ActionResult<Shop>> PostShop(ShopRequest shop)
         {
             try
             {
-                _context.Shops.Add(shop);
+                Shop newShop = new Shop()
+                {
+                    Shop_ID=shop.Shop_ID,
+                    Shop_Name=shop.Shop_Name,
+                    Location=shop.Location
+                };
+                _context.Shops.Add(newShop);
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction("GetShop", new { id = shop.Shop_ID }, shop);
