@@ -9,7 +9,7 @@ using WineShopWebAPI.Authentication;
 namespace WineShopWebAPI.Controllers
 {
 
-    [Authorize(Roles = "PurchaseManager")]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class SuppliersController : ControllerBase
