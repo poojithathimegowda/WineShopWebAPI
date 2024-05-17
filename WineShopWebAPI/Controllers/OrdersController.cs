@@ -12,7 +12,8 @@ using Newtonsoft.Json.Linq;
 
 namespace WineShopWebAPI.Controllers
 {
-    [Authorize(Roles = "StoreManager")]
+
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase

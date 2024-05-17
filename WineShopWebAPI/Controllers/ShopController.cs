@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis;
 
 namespace WineShopWebAPI.Controllers
 {
-   
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ShopController : ControllerBase
@@ -49,7 +49,7 @@ namespace WineShopWebAPI.Controllers
 
         // PUT: api/Shop/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutShop(int id, ShopRequest shop)
+        public async Task<IActionResult> PutShop(int id, ShopModel shop)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace WineShopWebAPI.Controllers
 
         // POST: api/Shop
         [HttpPost]
-        public async Task<ActionResult<Shop>> PostShop(ShopRequest shop)
+        public async Task<ActionResult<Shop>> PostShop(ShopModel shop)
         {
             try
             {
@@ -150,7 +150,63 @@ namespace WineShopWebAPI.Controllers
             }
         }
 
+        [HttpGet("GetProfitAndLoss")]
+        public async Task<ActionResult<ProfitLossDto>> GetProfitAndLoss(int shopId, DateTime start, DateTime end)
+        {
+            // Validate the input dates
+            if (start >= end)
+            {
+                return BadRequest("Start date must be earlier than end date.");
+            }
 
+            // Fetch and fill shop obj
+
+            var shop= await _context.Shops.Where(s=>s.Shop_ID== shopId).FirstOrDefaultAsync();
+
+            // Fetch and group orders by date
+            var orders = await _context.Orders
+                .Where(o => o.Shop_ID == shopId && o.Order_Date >= start && o.Order_Date <= end)
+                .GroupBy(o => o.Order_Date.Date)
+                .Select(g => new OrderDto
+                {
+                    Date = g.Key,
+                    TotalAmount = g.Sum(o => o.Total_Amount)
+                })
+                .ToListAsync();
+
+            // Fetch and group expenses by date
+            var expenses = await _context.Expenses
+                .Where(e => e.Shop_ID == shopId && e.Date >= start && e.Date <= end)
+                .GroupBy(e => e.Date.Date)
+                .Select(g => new ExpenseDto
+                {
+                    Date = g.Key,
+                    Amount = g.Sum(e => e.Amount)
+                })
+                .ToListAsync();
+
+            // Calculate total income and expenses
+            var totalIncome = orders.Sum(o => o.TotalAmount);
+            var totalExpenses = expenses.Sum(e => e.Amount);
+            var profitOrLoss = totalIncome - totalExpenses;
+
+            // Create the result
+            var result = new ProfitLossDto
+            {
+                Shop = new ShopModel() {
+                    Shop_ID = shop.Shop_ID,
+                    Shop_Name=shop.Shop_Name,
+                    Location=shop.Location
+                },
+                Income = totalIncome,
+                Expenses = totalExpenses,
+                ProfitOrLoss = profitOrLoss,
+                Orders = orders,
+                ExpensesList = expenses
+            };
+
+            return Ok(result);
+        }
 
     }
 }

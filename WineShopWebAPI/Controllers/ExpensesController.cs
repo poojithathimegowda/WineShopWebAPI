@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WineShopWebAPI.Controllers
 {
-    [Authorize(Roles = "Admin,StoreManager,Employee")]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ExpensesController : ControllerBase
@@ -61,7 +61,7 @@ namespace WineShopWebAPI.Controllers
                 expense.Shop_ID = value.Shop_ID;
                 expense.Expense_Type = value.Expense_Type;
                 expense.Amount = value.Amount;
-
+                expense.Date = value.Date;
                 var existingShop = await _context.Shops.FindAsync(expense.Shop_ID);
                 
                 expense.Shop = existingShop;
@@ -99,7 +99,7 @@ namespace WineShopWebAPI.Controllers
                 expense.Shop_ID = value.Shop_ID;
                 expense.Expense_Type = value.Expense_Type;
                 expense.Amount = value.Amount;
-
+                expense.Date = value.Date;
                 var existingShop = await _context.Shops.FindAsync(value.Shop_ID);
                 
                 // Assign the existing shop to the expense
