@@ -7,6 +7,8 @@ Welcome to the Wine Store API! This API is designed to manage a wine store, incl
 - **Authentication**: JWT Tokens
 - **Authorization**: Microsoft Identity
 - **Language**: C#
+- **Database** : MS SQL SERVER
+- **ORM FRAMEWORK**: Entity Framework Core 7.0
 
 
 ## 🌐 Base URL
