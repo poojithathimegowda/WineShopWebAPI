@@ -1,17 +1,6 @@
 # 🍷 Wine Store API
 
-Welcome to the Wine Store API! This API is designed to manage a wine store, including inventory, orders, products, and more. It is built using **ASP.NET Core MVC** and uses **JWT tokens** for authentication and **Microsoft Identity** for authorization.
-
-## 🛠️ Technologies Used
-- **Framework**: ASP.NET Core MVC
-- **Authentication**: JWT Tokens
-- **Authorization**: Microsoft Identity
-- **Language**: C#
-
-For more detailed information about each endpoint, refer to the OpenAPI/Swagger documentation provided in the API. 
-
-[OpenAPI/Swagger Documentation](https://wineshopwebapi20240423191025.azurewebsites.net/swagger/index.html)
-
+Welcome to the Wine Store API! This API is designed to manage a wine store, including inventory, orders, products, and more. It is built using **ASP.NET Core Web API** and uses **JWT tokens** for authentication and **Microsoft Identity** for authorization.
 
 ## 🌐 Base URL
 
@@ -24,19 +13,12 @@ https://wineshopwebapi20240423191025.azurewebsites.net/
 
 This API uses JWT tokens for authentication. You need to include a valid JWT token in the Authorization header of your requests.
 
-### Register Admin
-Register a new admin user.
-```
-POST /api/Admin/register
-```
+- **Register Admin**: Register a new admin user. `POST /api/Admin/register`
+- **Authenticate**: Authenticate and get a JWT token. `POST /api/Authenticate/login`
 
-### Authenticate
-Authenticate and get a JWT token.
-```
-POST /api/Authenticate/login
-```
+## 📚 API Endpoints
 
-## 💸 Expenses
+### 💸 Expenses
 Manage store expenses with the following endpoints:
 
 - **Get All Expenses**: `GET /api/Expenses`
@@ -45,7 +27,7 @@ Manage store expenses with the following endpoints:
 - **Update Expense**: `PUT /api/Expenses/{id}`
 - **Delete Expense**: `DELETE /api/Expenses/{id}`
 
-## 📦 Inventory
+### 📦 Inventory
 Manage inventory items with the following endpoints:
 
 - **Get All Inventory Items**: `GET /api/Inventory`
@@ -54,7 +36,7 @@ Manage inventory items with the following endpoints:
 - **Update Inventory Item**: `PUT /api/Inventory/{id}`
 - **Delete Inventory Item**: `DELETE /api/Inventory/{id}`
 
-## 🛒 Orders
+### 🛒 Orders
 Manage customer orders with the following endpoints:
 
 - **Get All Orders**: `GET /api/Orders`
@@ -63,7 +45,7 @@ Manage customer orders with the following endpoints:
 - **Update Order**: `PUT /api/Orders/{id}`
 - **Delete Order**: `DELETE /api/Orders/{id}`
 
-## 🍾 Products
+### 🍾 Products
 Manage products available in the store with the following endpoints:
 
 - **Get All Products**: `GET /api/Products`
@@ -73,7 +55,7 @@ Manage products available in the store with the following endpoints:
 - **Delete Product**: `DELETE /api/Products/{id}`
 - **AutoComplete Products**: `GET /api/Products/AutoComplete`
 
-## 🏪 Shop
+### 🏪 Shop
 Manage shop details and profit/loss calculations with the following endpoints:
 
 - **Get Shop Details**: `GET /api/Shop`
@@ -81,7 +63,7 @@ Manage shop details and profit/loss calculations with the following endpoints:
 - **AutoComplete Shop**: `GET /api/Shop/AutoComplete`
 - **Get Profit and Loss**: `GET /api/Shop/GetProfitAndLoss`
 
-## 🤝 Suppliers
+### 🤝 Suppliers
 Manage suppliers with the following endpoints:
 
 - **Get All Suppliers**: `GET /api/Suppliers`
@@ -91,3 +73,12 @@ Manage suppliers with the following endpoints:
 - **Delete Supplier**: `DELETE /api/Suppliers/{id}`
 - **AutoComplete Suppliers**: `GET /api/Suppliers/AutoComplete`
 
+## 🛠️ Technologies Used
+- **Framework**: ASP.NET Core Web API
+- **Authentication**: JWT Tokens
+- **Authorization**: Microsoft Identity
+- **Language**: C#
+
+For more detailed information about each endpoint, refer to the OpenAPI/Swagger documentation provided in the API. 
+
+[OpenAPI/Swagger Documentation](https://wineshopwebapi20240423191025.azurewebsites.net/swagger/index.html)
