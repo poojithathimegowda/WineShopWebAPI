@@ -2,9 +2,16 @@
 
 Welcome to the Wine Store API! This API is designed to manage a wine store, including inventory, orders, products, and more. It is built using **ASP.NET Core Web API** and uses **JWT tokens** for authentication and **Microsoft Identity** for authorization.
 
+## 🛠️ Technologies Used
+- **Framework**: ASP.NET Core Web API
+- **Authentication**: JWT Tokens
+- **Authorization**: Microsoft Identity
+- **Language**: C#
+
+
 ## 🌐 Base URL
 
-The API is hosted at:
+The API is hosted at Microsoft Azure:
 ```
 https://wineshopwebapi20240423191025.azurewebsites.net/
 ```
@@ -73,11 +80,6 @@ Manage suppliers with the following endpoints:
 - **Delete Supplier**: `DELETE /api/Suppliers/{id}`
 - **AutoComplete Suppliers**: `GET /api/Suppliers/AutoComplete`
 
-## 🛠️ Technologies Used
-- **Framework**: ASP.NET Core Web API
-- **Authentication**: JWT Tokens
-- **Authorization**: Microsoft Identity
-- **Language**: C#
 
 For more detailed information about each endpoint, refer to the OpenAPI/Swagger documentation provided in the API. 
 
